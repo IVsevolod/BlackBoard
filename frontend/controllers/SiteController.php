@@ -74,6 +74,11 @@ class SiteController extends Controller
      */
     public function actionIndex($alias = "")
     {
+        $group = Group::findOne(['alias' => $alias]);
+        if (!empty($group)) {
+            $group->addShowCount();
+            $group->save();
+        }
         return $this->render('index', ['alias' => $alias]);
     }
 
