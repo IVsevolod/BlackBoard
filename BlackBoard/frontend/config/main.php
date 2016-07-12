@@ -35,8 +35,8 @@ return [
             'enableStrictParsing' => false,
             'rules'               => [
                 '/'                                              => 'site/index',
-//                'advert/create'                                  => 'site/createadvert',
-//                'ads/<alias:[\w-]+>'                             => 'site/showadvert',
+                'advert/create'                                  => 'site/createadvert',
+                'ads/<alias:[\w-]+>'                             => 'site/showadvert',
                 '<controller:[\w-]+>/<action:[\w-]+>/<id:[\d+]>' => '<controller>/<action>',
                 '<controller:[\w-]+>/<action:[\w-]+>'            => '<controller>/<action>',
             ],
