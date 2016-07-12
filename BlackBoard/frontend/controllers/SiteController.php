@@ -75,6 +75,11 @@ class SiteController extends Controller
         return $this->render('index');
     }
 
+    public function actionCreateadvert()
+    {
+        echo "23";
+    }
+
     /**
      * Logs in a user.
      *
