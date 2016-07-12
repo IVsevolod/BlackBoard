@@ -11,6 +11,16 @@ $this->title = 'Объявление';
 
 $this->params['breadcrumbs'][] = $this->title;
 
+$keywords = $ads->extract_keywords(strip_tags($ads->description));
+$this->registerMetaTag([
+    'name'    => 'keywords',
+    'content' => $keywords,
+], 'keywords');
+
+$this->registerMetaTag([
+    'name'    => 'description',
+    'content' => $ads->description . '. Телефон: ' . $ads->phone,
+], 'description');
 ?>
 <div id="item-header">
     <h1><?= $ads->getTitle() ?></h1>

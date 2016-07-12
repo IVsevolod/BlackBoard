@@ -86,6 +86,33 @@ class Ads extends ActiveRecord
         $this->save();
     }
 
+
+    public function extract_keywords($str, $minWordLen = 3, $minWordOccurrences = 1, $asArray = false)
+    {
+        $str = preg_replace('/[^\p{L}0-9 ]/', ' ', $str);
+        $str = trim(preg_replace('/\s+/', ' ', $str));
+
+        $words = explode(' ', $str);
+        $keywords = array();
+        while(($c_word = array_shift($words)) !== null) {
+            if(strlen($c_word) < $minWordLen) continue;
+
+            $c_word = strtolower($c_word);
+            if(array_key_exists($c_word, $keywords)) $keywords[$c_word][1]++;
+            else $keywords[$c_word] = array($c_word, 1);
+        }
+        usort($keywords, function ($first, $sec) {
+            return $sec[1] - $first[1];
+        });
+
+        $final_keywords = array();
+        foreach($keywords as $keyword_det) {
+            if($keyword_det[1] < $minWordOccurrences) break;
+            array_push($final_keywords, $keyword_det[0]);
+        }
+        return $asArray ? $final_keywords : implode(', ', $final_keywords);
+    }
+
     // функция превода текста с кириллицы в траскрипт
     function encodestring($str)
     {
