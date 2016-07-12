@@ -109,3 +109,15 @@ a.desc:after {
 .nav > li > form > button:hover {
     text-decoration: none;
 }
+
+div.bboard-block div {
+    max-width: 600px;
+    border: 1px dotted #3a87ad;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.select-all-group {
+    max-width: 600px;
+    margin-bottom: 20px;
+}

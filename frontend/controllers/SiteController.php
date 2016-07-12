@@ -1,6 +1,8 @@
 <?php
 namespace frontend\controllers;
 
+use common\models\Ads;
+use common\models\Group;
 use Yii;
 use yii\base\InvalidParamException;
 use yii\web\BadRequestHttpException;
@@ -26,22 +28,22 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::className(),
-                'only' => ['logout', 'signup'],
+                'only'  => ['logout', 'signup'],
                 'rules' => [
                     [
                         'actions' => ['signup'],
-                        'allow' => true,
-                        'roles' => ['?'],
+                        'allow'   => true,
+                        'roles'   => ['?'],
                     ],
                     [
                         'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
+                        'allow'   => true,
+                        'roles'   => ['@'],
                     ],
                 ],
             ],
-            'verbs' => [
-                'class' => VerbFilter::className(),
+            'verbs'  => [
+                'class'   => VerbFilter::className(),
                 'actions' => [
                     'logout' => ['post'],
                 ],
@@ -55,11 +57,11 @@ class SiteController extends Controller
     public function actions()
     {
         return [
-            'error' => [
+            'error'   => [
                 'class' => 'yii\web\ErrorAction',
             ],
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
+                'class'           => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
@@ -70,14 +72,70 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($alias = "")
     {
-        return $this->render('index');
+        return $this->render('index', ['alias' => $alias]);
+    }
+
+    public function actionLoadadvert()
+    {
+        $request = Yii::$app->request;
+        $alias = $request->post('alias');
+        $lastId = $request->post('lastId');
+        $find = Ads::find()->orderBy('id DESC')->limit(20);
+        if ($lastId >= 0) {
+            $find = $find->andWhere('id < :id', [':id' => $lastId]);
+        }
+        if (!empty($alias)) {
+            $group = Group::findOne(['alias' => $alias]);
+            if (!empty($group)) {
+                $find = $find->andWhere('`group` = :group', [':group' => $group->id]);
+            }
+        }
+        $adss = $find->all();
+        $result = [];
+        foreach ($adss as $ads) {
+            /** @var Ads $ads */
+            $result[] = [
+                'id'          => $ads->id,
+                'title'       => $ads->getTitle(),
+                'description' => strip_tags($ads->description),
+                'phone'       => strip_tags($ads->phone),
+                'href'        => $ads->getUrl(),
+            ];
+        }
+
+        return json_encode($result);
     }
 
     public function actionCreateadvert()
     {
-        echo "23";
+        $ads = new Ads();
+        if ($ads->load(Yii::$app->request->post())) {
+            $ads->description = \yii\helpers\HtmlPurifier::process($ads->description, []);
+            $ads->show_count = 0;
+            $ads->group = (int)Yii::$app->request->post('Ads')['group'];
+            if ($ads->save()) {
+                return Yii::$app->getResponse()->redirect($ads->getUrl());
+            }
+        }
+
+        return $this->render(
+            'add',
+            ['ads' => $ads]
+        );
+    }
+
+    public function actionShowadvert($alias)
+    {
+        $ads = Ads::findOne(['alias' => $alias]);
+        $ads->addShowCount();
+        $ads->save();
+
+        return $this->render(
+            'showAds',
+            ['ads' => $ads]
+        );
     }
 
     /**
@@ -215,4 +273,5 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
 }

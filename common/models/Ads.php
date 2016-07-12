@@ -21,6 +21,7 @@ use yii\web\IdentityInterface;
  * @property string      $phone
  * @property int         $show_count
  * @property string      $alias
+ * @property integer     $group
  * @property int         $deleted
  * @property integer     $date_update
  * @property integer     $date_create
@@ -116,6 +117,7 @@ class Ads extends ActiveRecord
                 if (empty($title)) {
                     $title = trim($this->description);
                 }
+                $this->title = substr($title, 0, 100);
                 $title = $this->encodestring($title);
                 $alias = $this->toAscii($title);
                 $baseAlias = substr($alias, 0, 150);
@@ -139,95 +141,8 @@ class Ads extends ActiveRecord
 
     public function getUrl($scheme = false, $addParams = [])
     {
-        if ($this->alias) {
-            $params = ['ads', 'alias' => $this->alias];
-            $params = array_merge($params, $addParams);
-            return Url::to($params, $scheme);
-        } else {
-            $params = ['school/view', 'index' => $this->id];
-            $params = array_merge($params, $addParams);
-            return Url::to($params, $scheme);
-        }
-    }
-
-
-    public function addReputation($addReputation)
-    {
-        $user = User::thisUser();
-        $modelUserId = $this->user_id;
-        $paramsSelf = [
-            'entity' => self::THIS_ENTITY,
-            'schoolId' => $this->id,
-            'userId' => $user->id,
-        ];
-        $paramsOther = [
-            'entity' => self::THIS_ENTITY,
-            'schoolId' => $this->id,
-            'userId' => $modelUserId,
-        ];
-
-        if ($addReputation == VoteModel::ADD_REPUTATION_CANCEL_UP) {
-            // - хозяину события за отмену лайка
-            Reputation::addReputation($modelUserId, Reputation::ENTITY_VOTE_LIKE_SELF_SCHOOL_CANCEL, $paramsSelf);
-        } elseif ($addReputation == VoteModel::ADD_REPUTATION_UP) {
-            // + хозяину события за лайк
-            Reputation::addReputation($modelUserId, Reputation::ENTITY_VOTE_LIKE_SELF_SCHOOL, $paramsSelf);
-            // Если раньше не было оценки, пользователь ставит лайк и его репутация маленькая, тогда добавим ему репутации
-            if ($user->reputation < self::MAX_REPUTATION_FOR_ADD_REPUTATION_SCHOOL_VOTE_LIKE &&
-                $user->reputation > self::MIN_REPUTATION_FOR_ADD_REPUTATION_SCHOOL_VOTE_LIKE
-            ) {
-                // + текущему пользователю за лайк
-                Reputation::addReputation($user->id, Reputation::ENTITY_VOTE_LIKE_OTHER_SCHOOL, $paramsOther);
-            }
-        } elseif ($addReputation == VoteModel::ADD_REPUTATION_CANCEL_DOWN) {
-            // + хозяину события за отмену дизлайка
-            Reputation::addReputation($modelUserId, Reputation::ENTITY_VOTE_DISLIKE_SELF_SCHOOL_CANCEL, $paramsSelf);
-            // + текущему пользователю за отмену дизлайка
-            Reputation::addReputation($user->id, Reputation::ENTITY_VOTE_DISLIKE_OTHER_SCHOOL_CANCEL, $paramsOther);
-        } elseif ($addReputation == VoteModel::ADD_REPUTATION_DOWN) {
-            // - хозяину события за дизлайк
-            Reputation::addReputation($modelUserId, Reputation::ENTITY_VOTE_DISLIKE_SELF_SCHOOL, $paramsSelf);
-            // - текущему пользователю за дизлайк
-            Reputation::addReputation($user->id, Reputation::ENTITY_VOTE_DISLIKE_OTHER_SCHOOL, $paramsOther);
-        }
-    }
-
-    public function getCountry()
-    {
-        $country = null;
-        if (!empty($this->country)) {
-            $country = Countries::findOne(['id' => $this->country]);
-        }
-        return $country;
-    }
-
-    public function getCountryText()
-    {
-        $country = $this->getCountry();
-        if (!empty($country)) {
-            $lang = Lang::$current->url;
-            return $country->getLangCountries($lang);
-        }
-        return "";
-    }
-
-    public function getCity()
-    {
-        return htmlspecialchars($this->city);
-    }
-
-    public function getCountryCityText()
-    {
-        $countryText = $this->getCountryText();
-        $city = $this->getCity();
-        $countryCityText = $countryText;
-        if (!empty($countryText) && !empty($city)) {
-            $countryCityText .= ", ";
-        }
-        $countryCityText .= $city;
-        if (empty($countryCityText)) {
-            $countryCityText = " - ";
-        }
-        return $countryCityText;
+        $params = ['site/showadvert', 'alias' => $this->alias];
+        $params = array_merge($params, $addParams);
+        return Url::to($params, $scheme);
     }
 }
