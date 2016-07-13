@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use common\models\Ads;
+use common\models\City;
 use common\models\Group;
 use Yii;
 use yii\base\InvalidParamException;
@@ -74,23 +75,29 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index', ['alias' => ""]);
+        return $this->render('index', ['alias' => "", 'cityId' => "0"]);
     }
 
-    public function actionBboard($alias)
+    public function actionBboardcity($city)
+    {
+        return $this->render('index', ['alias' => "", 'cityId' => $city]);
+    }
+
+    public function actionBboard($alias, $city)
     {
         $group = Group::findOne(['alias' => $alias]);
         if (!empty($group)) {
             $group->addShowCount();
             $group->save();
         }
-        return $this->render('index', ['alias' => $alias]);
+        return $this->render('index', ['alias' => $alias, 'cityId' => $city]);
     }
 
     public function actionLoadadvert()
     {
         $request = Yii::$app->request;
         $alias = $request->post('alias');
+        $cityId = $request->post('city');
         $lastId = $request->post('lastId');
         $find = Ads::find()->orderBy('id DESC')->limit(20);
         if ($lastId >= 0) {
@@ -102,12 +109,26 @@ class SiteController extends Controller
                 $find = $find->andWhere('`group` = :group', [':group' => $group->id]);
             }
         }
+        if (!empty($cityId)) {
+            $find = $find->andWhere('`city` = :cityId', [':cityId' => $cityId]);
+        }
         $adss = $find->all();
         $result = [];
+        $cities = [];
         foreach ($adss as $ads) {
             /** @var Ads $ads */
+            $cityName = "";
+            if ($ads->city > 0) {
+                if (isset($cities[$ads->city])) {
+                    $cityName = $cities[$ads->city];
+                } else if ($city = $ads->citym) {
+                    $cityName = $city->name;
+                    $cities[$ads->city] = $cityName;
+                }
+            }
             $result[] = [
                 'id'          => $ads->id,
+                'city'        => $cityName,
                 'title'       => $ads->getTitle(),
                 'description' => strip_tags($ads->description),
                 'phone'       => strip_tags($ads->phone),
@@ -125,6 +146,20 @@ class SiteController extends Controller
             $ads->description = \yii\helpers\HtmlPurifier::process($ads->description, []);
             $ads->show_count = 0;
             $ads->group = (int)Yii::$app->request->post('Ads')['group'];
+            $cityText = Yii::$app->request->post('cityText');
+            if (!empty($cityText)) {
+                $city = City::find()->andWhere('name = :name', [':name' => $cityText])->one();
+                if (empty($city)) {
+                    $city = new City();
+                    $city->name = $cityText;
+                    if ($city->save()) {
+                        $ads->city = $city->id;
+                    }
+                } else {
+                    $ads->city = $city->id;
+                }
+            }
+
             if ($ads->save()) {
                 return Yii::$app->getResponse()->redirect($ads->getUrl());
             }

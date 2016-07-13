@@ -4,6 +4,7 @@
  */
 
 use common\models\Ads;
+use common\models\City;
 use common\models\Group;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -21,10 +22,20 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-lg-9">
             <?php $form = ActiveForm::begin(); ?>
             <?= $form->field($ads, 'group')->dropDownList(Group::getAllCategories(false), [
-                'prompt' => 'Все',
-                'class' => 'form-control select-all-group',
+                'prompt'   => 'Все',
+                'class'    => 'form-control select-all-group',
                 'data-url' => \yii\helpers\Url::to(['site/index']),
-            ] )->label('Категория') ?>
+            ])->label('Категория') ?>
+            <?= $form->field($ads, 'city')->dropDownList(City::getCities(), [
+                'prompt'   => 'Все',
+                'class'    => 'form-control select-all-group',
+                'data-url' => \yii\helpers\Url::to(['site/index']),
+            ])->label('Город') ?>
+            <a href="javascript: (function() {$('.new-city-block').removeClass('hide'); $('.link-add-city').hide(); })();" class="link-add-city margin-bottom">Моего города нет</a>
+            <div class="new-city-block hide">
+            <label>Добавить город</label>
+            <?= Html::textInput('cityText', '', ['class' => 'form-control']) ?>
+            </div>
             <?= $form->field($ads, 'title')->label('Заголовок') ?>
             <?= $form->field($ads, 'phone')->label('Телефон') ?>
             <?= $form->field($ads, 'description')->textarea()->label('Описание') ?>

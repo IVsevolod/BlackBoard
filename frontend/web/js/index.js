@@ -18,7 +18,8 @@ $(document).ready(function () {
             url: $blockAds.data('load-url'),
             data: {
                 lastId: lastId,
-                alias: aliasLoad
+                alias: aliasLoad,
+                city: cityId
             },
             method: 'post',
             dataType: 'json',
@@ -42,7 +43,8 @@ $(document).ready(function () {
                             $('<p></p>').html(this.description),
                             $('<b>Телефон</b>'),
                             ': ',
-                            this.phone
+                            this.phone,
+                            (this.city != "" ? "<br/><b>Город</b>: " + this.city : "")
                         ])
                     ]);
                     $blockAds.append($newAds);
@@ -63,11 +65,28 @@ $(document).ready(function () {
     });
 
     $(document).on('change', '.select-all-group', function() {
-        var alias = $(this).val();
+        var cityId = $('.select-all-city').val();
+        var alias = $('.select-all-group').val();
+        if (cityId == "") {
+            cityId = "0";
+        }
         if (alias == "") {
-            window.location = $(this).data('url');
+            window.location = $(this).data('bboard-url') + '/' + cityId;
         } else {
-            window.location = $(this).data('bboard-url') + '/' + alias;
+            window.location = $(this).data('bboard-url') + '/' + cityId + '/' + alias;
+        }
+    });
+
+    $(document).on('change', '.select-all-city', function() {
+        var cityId = $(this).val();
+        var alias = $('.select-all-group').val();
+        if (cityId == "") {
+            cityId = "0";
+        }
+        if (alias == "") {
+            window.location = $(this).data('bboard-url') + '/' + cityId;
+        } else {
+            window.location = $(this).data('bboard-url') + '/' + cityId + '/' + alias;
         }
     });
 

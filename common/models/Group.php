@@ -1,16 +1,9 @@
 <?php
 namespace common\models;
 
-use common\models\User;
-use frontend\models\Lang;
 use Yii;
-use yii\base\NotSupportedException;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
-use yii\db\Query;
 use yii\helpers\Url;
-use yii\web\IdentityInterface;
 
 /**
  * group model

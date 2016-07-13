@@ -23,8 +23,11 @@ use yii\web\IdentityInterface;
  * @property string      $alias
  * @property integer     $group
  * @property int         $deleted
+ * @property int         $city
  * @property integer     $date_update
  * @property integer     $date_create
+ *
+ * @property City $citym
  */
 class Ads extends ActiveRecord
 {
@@ -65,7 +68,7 @@ class Ads extends ActiveRecord
     {
         return [
             [['description'], 'default', 'value' => ''],
-            [['date_update', 'date_create'], 'integer'],
+            [['date_update', 'date_create', 'city'], 'integer'],
             [['title', 'alias'], 'string', 'max' => 255],
             [['description'], 'string', 'max' => 10000],
             [['phone'], 'string', 'max' => 30],
@@ -174,5 +177,10 @@ class Ads extends ActiveRecord
         $params = ['site/showadvert', 'alias' => $this->alias];
         $params = array_merge($params, $addParams);
         return Url::to($params, $scheme);
+    }
+
+    public function getCitym()
+    {
+        return $this->hasOne(City::className(), ['id' => 'city']);
     }
 }

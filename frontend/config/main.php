@@ -36,7 +36,8 @@ return [
             'rules'               => [
                 '/'                                              => 'site/index',
                 'ads/<alias:[\w-]+>'                             => 'site/showadvert',
-                'bboards/<alias:[\w-]+>'                         => 'site/bboard',
+                'bboards/<city:[\d+]>'                           => 'site/bboardcity',
+                'bboards/<city:[\d+]>/<alias:[\w-]+>'            => 'site/bboard',
                 'advert/create'                                  => 'site/createadvert',
                 'bboard/load'                                    => 'site/loadadvert',
                 '<controller:[\w-]+>/<action:[\w-]+>/<id:[\d+]>' => '<controller>/<action>',

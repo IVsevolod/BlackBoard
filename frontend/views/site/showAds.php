@@ -21,11 +21,18 @@ $this->registerMetaTag([
     'name'    => 'description',
     'content' => $ads->description . '. Телефон: ' . $ads->phone,
 ], 'description');
+
+$city = $ads->citym;
 ?>
 <div id="item-header">
     <h1><?= $ads->getTitle() ?></h1>
+    <?php
+    if (!empty($city)) {
+        echo "<b>Город</b>: " . $city->name . "<br/>";
+    }
+    ?>
+    <b>Телефон</b>: <?= strip_tags($ads->phone) ?><br/>
     <p>
         <?= strip_tags($ads->description) ?>
     </p>
-    <b>Телефон</b>: <?= strip_tags($ads->phone) ?>
 </div>
