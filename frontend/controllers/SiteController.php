@@ -141,10 +141,9 @@ class SiteController extends Controller
 
     public function actionSitemap()
     {
-        // проверяем есть ли закэшированная версия sitemap
         $urls = array();
 
-        $items = Ads::find()->where(['deleted' => 0])->all();
+        $items = Ads::find()->where(['deleted' => 0])->orderBy('id DESC')->limit(5000)->all();
 
         foreach ($items as $item) {
             /** @var Ads $item */
