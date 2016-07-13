@@ -35,6 +35,7 @@ return [
             'enableStrictParsing' => false,
             'rules'               => [
                 '/'                                              => 'site/index',
+                'sitemap.xml'                                    => 'site/sitemap',
                 'ads/<alias:[\w-]+>'                             => 'site/showadvert',
                 'bboards/<city:[\d+]>'                           => 'site/bboardcity',
                 'bboards/<city:[\d+]>/<alias:[\w-]+>'            => 'site/bboard',
