@@ -72,7 +72,12 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex($alias = "")
+    public function actionIndex()
+    {
+        return $this->render('index', ['alias' => ""]);
+    }
+
+    public function actionBboard($alias)
     {
         $group = Group::findOne(['alias' => $alias]);
         if (!empty($group)) {

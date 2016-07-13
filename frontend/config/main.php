@@ -34,11 +34,11 @@ return [
             'showScriptName'      => false,
             'enableStrictParsing' => false,
             'rules'               => [
-                '/<alias:[\w-]+>'                                => 'site/index',
                 '/'                                              => 'site/index',
+                'ads/<alias:[\w-]+>'                             => 'site/showadvert',
+                'bboards/<alias:[\w-]+>'                         => 'site/bboard',
                 'advert/create'                                  => 'site/createadvert',
                 'bboard/load'                                    => 'site/loadadvert',
-                'ads/<alias:[\w-]+>'                             => 'site/showadvert',
                 '<controller:[\w-]+>/<action:[\w-]+>/<id:[\d+]>' => '<controller>/<action>',
                 '<controller:[\w-]+>/<action:[\w-]+>'            => '<controller>/<action>',
             ],

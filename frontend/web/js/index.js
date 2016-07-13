@@ -15,7 +15,7 @@ $(document).ready(function () {
 
         loading = true;
         $.ajax({
-            url: 'bboard/load',
+            url: $blockAds.data('load-url'),
             data: {
                 lastId: lastId,
                 alias: aliasLoad
@@ -67,7 +67,7 @@ $(document).ready(function () {
         if (alias == "") {
             window.location = $(this).data('url');
         } else {
-            window.location = alias;
+            window.location = $(this).data('bboard-url') + '/' + alias;
         }
     });
 

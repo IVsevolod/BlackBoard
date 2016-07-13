@@ -89,8 +89,8 @@ class Ads extends ActiveRecord
 
     public function extract_keywords($str, $minWordLen = 3, $minWordOccurrences = 1, $asArray = false)
     {
-        $str = preg_replace('/[^\p{L}0-9 ]/', ' ', $str);
-        $str = trim(preg_replace('/\s+/', ' ', $str));
+        $str = preg_replace('/[^\p{L}0-9 ]/u', ' ', $str);
+        $str = trim(preg_replace('/\s+/u', ' ', $str));
 
         $words = explode(' ', $str);
         $keywords = array();
@@ -149,6 +149,9 @@ class Ads extends ActiveRecord
                 $alias = $this->toAscii($title);
                 $baseAlias = substr($alias, 0, 150);
                 $alias = $baseAlias;
+                if (empty($alias)) {
+                    $alias = Ads::find()->max('id') + 1;
+                }
                 $wheres = ['alias = :alias'];
                 $params[':alias'] = $alias;
                 if (!is_null($this->id)) {
@@ -157,7 +160,7 @@ class Ads extends ActiveRecord
                 }
                 $where = join(' AND ', $wheres);
                 if ($findSchool = Ads::find()->where($where, $params)->one()) {
-                    $alias = $baseAlias . '-' . Ads::find()->max('id');
+                    $alias = $baseAlias . '-' . (Ads::find()->max('id') + 1);
                 }
                 $this->alias = $alias;
             }

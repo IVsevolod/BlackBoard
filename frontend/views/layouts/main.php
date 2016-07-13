@@ -18,6 +18,7 @@ AppAsset::register($this);
 <head>
     <meta charset="<?= Yii::$app->charset ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="<?= \yii\helpers\Url::to(['/img/icon.png']) ?>">
     <?= Html::csrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
@@ -36,6 +37,7 @@ AppAsset::register($this);
     ]);
     $menuItems = [
         ['label' => 'Доска объявлений', 'url' => ['/site/index']],
+        ['label' => '<b class="btn-sm btn-success">Добавить объявление</b>', 'url' => ['advert/create']]
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '<b class="success">mail@sdrd.ru</b>'];
@@ -70,7 +72,21 @@ AppAsset::register($this);
 <footer class="footer">
     <div class="container">
         <p class="pull-left">&copy; SDRD <?= date('Y') ?></p>
+
+        <div class="pull-right">
+            <!--LiveInternet counter--><script type="text/javascript"><!--
+                document.write("<a href='//www.liveinternet.ru/click' "+
+                    "target=_blank><img src='//counter.yadro.ru/hit?t45.1;r"+
+                    escape(document.referrer)+((typeof(screen)=="undefined")?"":
+                    ";s"+screen.width+"*"+screen.height+"*"+(screen.colorDepth?
+                        screen.colorDepth:screen.pixelDepth))+";u"+escape(document.URL)+
+                    ";"+Math.random()+
+                    "' alt='' title='LiveInternet' "+
+                    "border='0' width='31' height='31'><\/a>")
+                //--></script><!--/LiveInternet-->
+        </div>
     </div>
+
 </footer>
 
 <?php $this->endBody() ?>

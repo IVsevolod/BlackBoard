@@ -6,6 +6,7 @@
 
 use common\models\Group;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 
 $this->registerJsFile(Yii::$app->request->baseUrl . '/js/index.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
@@ -16,12 +17,14 @@ $this->title = 'Доска объявлений';
 <div class="site-index">
     <div class="body-content">
         <div class="row">
-            <?= Html::dropDownList('group', $alias, Group::getHierarchy(), [
+            <?= Html::dropDownList('group', $alias, Group::getAllCategories(), [
                 'prompt' => 'Все',
                 'class' => 'form-control select-all-group',
-                'data-url' => \yii\helpers\Url::to(['site/index']),
+                'data-url' => Url::to(['site/index']),
+                'data-bboard-url' => Url::to(['/bboards']),
+                'data-main-url' => Url::to(['/']),
             ] ) ?>
-            <div class="block-bboard" data-last-id="-1">
+            <div class="block-bboard" data-last-id="-1" data-load-url="<?= Url::to(['bboard/load']) ?>">
 
             </div>
 

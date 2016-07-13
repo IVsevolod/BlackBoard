@@ -67,7 +67,6 @@ class Group extends ActiveRecord
             [['date_update', 'date_create'], 'integer'],
             [['title', 'alias'], 'string', 'max' => 255],
             [['description'], 'string', 'max' => 10000],
-            [['phone'], 'string', 'max' => 30],
         ];
     }
 
@@ -131,9 +130,25 @@ class Group extends ActiveRecord
                     $child_options[$key] = $child->title;
                 }
                 $key = $aliasId ? $p->alias : $p->id;
-                $options[$key] = $child_options;
+                $options[$p->title] = $child_options;
             }
         }
+        return $options;
+    }
+
+    public static function getAllCategories($aliasId = true) {
+        $options = [];
+
+        $parents = self::getParents();
+        foreach($parents[0] as $p) {
+            if (!empty($parents[$p->id])) {
+                foreach($parents[$p->id] as $child) {
+                    $key = $aliasId ? $child->alias : $child->id;
+                    $options[$key] = $child->title;
+                }
+            }
+        }
+
         return $options;
     }
 }
