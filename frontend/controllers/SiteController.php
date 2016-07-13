@@ -130,7 +130,7 @@ class SiteController extends Controller
                 'id'          => $ads->id,
                 'city'        => $cityName,
                 'title'       => $ads->getTitle(),
-                'description' => strip_tags($ads->description),
+                'description' => nl2br(strip_tags($ads->description)),
                 'phone'       => strip_tags($ads->phone),
                 'href'        => $ads->getUrl(),
             ];
@@ -158,6 +158,9 @@ class SiteController extends Controller
                 } else {
                     $ads->city = $city->id;
                 }
+            }
+            if (empty($ads->city)) {
+                $ads->city = 0;
             }
 
             if ($ads->save()) {

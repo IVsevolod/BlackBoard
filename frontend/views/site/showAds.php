@@ -33,6 +33,6 @@ $city = $ads->citym;
     ?>
     <b>Телефон</b>: <?= strip_tags($ads->phone) ?><br/>
     <p>
-        <?= strip_tags($ads->description) ?>
+        <?= nl2br(strip_tags($ads->description)) ?>
     </p>
 </div>
