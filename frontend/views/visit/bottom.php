@@ -10,7 +10,7 @@ $request = Yii::$app->request;
 $data = $request->get();
 $url = $data[1]['url'];
 $type = $data[1]['type'];
-$wait_time = 2;
+$wait_time = 5;
 ?>
     <html>
 <head>
