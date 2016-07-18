@@ -96,4 +96,9 @@ class VisitController extends Controller
     {
         return $this->render('bottom');
     }
+
+    public function actionAny()
+    {
+        return $this->render('any');
+    }
 }

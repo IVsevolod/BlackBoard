@@ -7,6 +7,16 @@ use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
 $base = __DIR__ . "/base.txt";
+
+$this->registerMetaTag([
+    'name'    => 'keywords',
+    'content' => 'система, сервис, купить, скрипт, обмена, визитами, показами, посещениями, бесплатная, раскрутка, сайтов, веб-сайтов, интернет-ресурсов',
+], 'keywords');
+
+$this->registerMetaTag([
+    'name'    => 'description',
+    'content' => "Система обмена визитами. Cервис для бесплатной раскрутки веб-сайтов. Купить скрипт обмена визитами для бесплатного продвижения интернет-ресурсов.",
+], 'description');
 ?>
 <h1>Система обмена визитами</h1>
 <p>
@@ -33,5 +43,8 @@ $base = __DIR__ . "/base.txt";
     echo "<br/>";
     echo Html::submitInput('Добавить', ['class' => 'btn btn-success', 'name' => 'first']);
 
-    echo Html::endForm()
+    echo Html::endForm();
+
+    echo "<hr/>";
+    echo Html::a('Другие сайты обмена визитами', ['visit/any'], ['class' => 'btn btn-primary']);
 ?>
