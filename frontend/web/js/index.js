@@ -29,7 +29,7 @@ $(document).ready(function () {
                         lastId = parseInt(this.id);
                     }
                     var $newAds = $('<div class="bboard-block"></div>').append([
-                        $('<a href="javascript: void(0)"></a>').html(this.title).click(function() {
+                        $('<a href="javascript: void(0)" class="link-bboard"></a>').html(this.title).click(function() {
                             var $hideBlock = $(this).closest('div.bboard-block').find('div');
                             if ($hideBlock.hasClass('hide')) {
                                 $hideBlock.removeClass('hide');
