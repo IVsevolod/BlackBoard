@@ -3,6 +3,7 @@
  * @var yii\web\View $this
  * @var string $alias
  * @var int $cityId
+ * @var Group $group
  */
 
 use common\models\City;
@@ -15,7 +16,55 @@ $this->registerJsFile(Yii::$app->request->baseUrl . '/js/index.js', ['depends' =
 $this->registerJs("var alias = '" . htmlspecialchars($alias) . "';", View::POS_HEAD);
 $this->registerJs("var cityId = " . (empty($cityId) ? "0" : $cityId) . ";", View::POS_HEAD);
 
-$this->title = 'Доска объявлений';
+$this->title = 'Доска бесплатных объявлений';
+
+$description = "Объявление на sdrd.ru. Доска бесплатных объявлений. Подать объявление";
+
+$keywords = [
+    'доска объявлений',
+    'объявления',
+    'Бесплатные объявления',
+    'Подать объявление',
+    'Все объявления',
+];
+
+$cities = City::getCities();
+if ($cityId == 0) {
+    $url = Url::to(['/bboards']) . "/0" . (empty($alias) ? "" : "/" . $alias);
+    $this->params['breadcrumbs'][] = ['label' => "Все города", 'url' => $url];
+} else {
+    $url = Url::to(['/bboards']) . "/" . $cityId . (empty($alias) ? "" : "/" . $alias);
+    $this->params['breadcrumbs'][] = [
+        'label' => isset($cities[$cityId]) ? $cities[$cityId] : 'Город',
+        'url'   => $url,
+    ];
+    $description .= " в городе " . $cities[$cityId];
+    $keywords[] = 'Объявления ' . $cities[$cityId];
+    $keywords[] = 'Бесплатные объявления ' . $cities[$cityId];
+}
+$description .= ".";
+
+if (empty($group)) {
+    $url = Url::to(['/bboards']) . (empty($cityId) ? "/0" : "/" . $cityId);
+    $this->params['breadcrumbs'][] = ['label' => "Все категории", 'url' => $url];
+} else {
+    $url = Url::to(['/bboards']) . (empty($cityId) ? "/0" : "/" . $cityId) . "/" . $alias;
+    $this->params['breadcrumbs'][] = ['label' => $group->title, 'url' => $url];
+    $keywords[] = $alias;
+}
+$this->params['breadcrumbs'][] = 'Объявления';
+
+
+$this->registerMetaTag([
+    'name'    => 'keywords',
+    'content' => join(', ', $keywords),
+], 'keywords');
+
+$this->registerMetaTag([
+    'name'    => 'description',
+    'content' => $description,
+], 'description');
+
 ?>
 <div class="site-index">
     <div class="body-content">
@@ -32,7 +81,7 @@ $this->title = 'Доска объявлений';
                     ]) ?>
                 </div>
                 <label>Город: </label>
-                <?= Html::dropDownList('city', $cityId, City::getCities(), [
+                <?= Html::dropDownList('city', $cityId, $cities, [
                     'prompt'          => 'Все',
                     'class'           => 'form-control select-all-city',
                     'data-url'        => Url::to(['site/index']),

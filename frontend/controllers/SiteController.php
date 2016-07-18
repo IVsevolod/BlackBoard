@@ -75,12 +75,12 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index', ['alias' => "", 'cityId' => "0"]);
+        return $this->render('index', ['alias' => "", 'cityId' => "0", 'group' => null]);
     }
 
     public function actionBboardcity($city)
     {
-        return $this->render('index', ['alias' => "", 'cityId' => $city]);
+        return $this->render('index', ['alias' => "", 'cityId' => $city, 'group' => null]);
     }
 
     public function actionBboard($alias, $city)
@@ -90,7 +90,7 @@ class SiteController extends Controller
             $group->addShowCount();
             $group->save();
         }
-        return $this->render('index', ['alias' => $alias, 'cityId' => $city]);
+        return $this->render('index', ['alias' => $alias, 'cityId' => $city, 'group' => $group]);
     }
 
     public function actionLoadadvert()
