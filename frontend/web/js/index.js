@@ -28,8 +28,12 @@ $(document).ready(function () {
                     if (parseInt(this.id) < lastId || lastId < 0) {
                         lastId = parseInt(this.id);
                     }
+                    var title = this.title;
+                    if (this.price > 0) {
+                        title += " /<i>" + this.price + " руб.</i>";
+                    }
                     var $newAds = $('<div class="bboard-block"></div>').append([
-                        $('<a href="javascript: void(0)" class="link-bboard"></a>').html(this.title).click(function() {
+                        $('<a href="javascript: void(0)" class="link-bboard"></a>').html(title).click(function() {
                             var $hideBlock = $(this).closest('div.bboard-block').find('div');
                             if ($hideBlock.hasClass('hide')) {
                                 $hideBlock.removeClass('hide');
@@ -44,6 +48,7 @@ $(document).ready(function () {
                             $('<b>Телефон</b>'),
                             ': ',
                             this.phone,
+                            (this.price > 0 ? "<br/><b>Цена</b>: " + this.price : ""),
                             (this.city != "" ? "<br/><b>Город</b>: " + this.city : "")
                         ])
                     ]);

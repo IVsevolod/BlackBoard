@@ -75,12 +75,26 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index', ['alias' => "", 'cityId' => "0", 'group' => null]);
+
+        return $this->render('index', ['alias' => "", 'cityId' => "0", 'cityAlias' => '', 'group' => null]);
     }
 
     public function actionBboardcity($city)
     {
-        return $this->render('index', ['alias' => "", 'cityId' => $city, 'group' => null]);
+        if (!empty($city)) {
+            $mcity = City::find()->andWhere('`alias` = :cityAlias OR `id` = :cityId', [':cityAlias' => $city, ':cityId' => (int)$city])->one();
+        } else {
+            $mcity = null;
+        }
+        return $this->render(
+            'index',
+            [
+                'alias' => "",
+                'cityId' => !empty($mcity) ? $mcity->id : 0,
+                'cityAlias' => !empty($mcity) ? $mcity->alias : 0,
+                'group' => null
+            ]
+        );
     }
 
     public function actionBboard($alias, $city)
@@ -90,7 +104,20 @@ class SiteController extends Controller
             $group->addShowCount();
             $group->save();
         }
-        return $this->render('index', ['alias' => $alias, 'cityId' => $city, 'group' => $group]);
+        if (!empty($city)) {
+            $mcity = City::find()->andWhere('`alias` = :cityAlias OR `id` = :cityId', [':cityAlias' => $city, ':cityId' => (int)$city])->one();
+        } else {
+            $mcity = null;
+        }
+        return $this->render(
+            'index',
+            [
+                'alias' => $alias,
+                'cityId' => !empty($mcity) ? $mcity->id : 0,
+                'cityAlias' => !empty($mcity) ? $mcity->alias : 0,
+                'group' => $group,
+            ]
+        );
     }
 
     public function actionLoadadvert()
@@ -110,7 +137,9 @@ class SiteController extends Controller
             }
         }
         if (!empty($cityId)) {
-            $find = $find->andWhere('`city` = :cityId', [':cityId' => $cityId]);
+            $mcity = City::find()->andWhere('`alias` = :cityAlias OR `id` = :cityId', [':cityAlias' => $cityId, ':cityId' => $cityId])->one();
+
+            $find = $find->andWhere('`city` = :cityId', [':cityId' => $mcity->id]);
         }
         $adss = $find->all();
         $result = [];
@@ -129,7 +158,9 @@ class SiteController extends Controller
             $result[] = [
                 'id'          => $ads->id,
                 'city'        => $cityName,
+                'cityAlias'   => !empty($mcity) ? $mcity->alias : 0,
                 'title'       => $ads->getTitle(),
+                'price'       => $ads->price,
                 'description' => nl2br(strip_tags($ads->description)),
                 'phone'       => strip_tags($ads->phone),
                 'href'        => $ads->getUrl(),
@@ -179,6 +210,7 @@ class SiteController extends Controller
                 if (empty($city)) {
                     $city = new City();
                     $city->name = $cityText;
+                    $city->alias = $city->genAlias($cityText);
                     if ($city->save()) {
                         $ads->city = $city->id;
                     }
@@ -276,6 +308,7 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
+        $this->layout = 'about';
         return $this->render('about');
     }
 

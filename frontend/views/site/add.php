@@ -26,7 +26,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class'    => 'form-control select-all-group',
                 'data-url' => \yii\helpers\Url::to(['site/index']),
             ])->label('Категория') ?>
-            <?= $form->field($ads, 'city')->dropDownList(City::getCities(), [
+            <?= $form->field($ads, 'city')->dropDownList(City::getCities(false), [
                 'prompt'   => 'Все',
                 'class'    => 'form-control select-all-group',
                 'data-url' => \yii\helpers\Url::to(['site/index']),
@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= Html::textInput('cityText', '', ['class' => 'form-control']) ?>
             </div>
             <?= $form->field($ads, 'title')->label('Заголовок') ?>
+            <?= $form->field($ads, 'price')->label('Цена') ?>
             <?= $form->field($ads, 'phone')->label('Телефон') ?>
             <?= $form->field($ads, 'description')->textarea()->label('Описание') ?>
 

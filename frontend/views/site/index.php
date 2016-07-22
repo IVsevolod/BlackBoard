@@ -3,6 +3,7 @@
  * @var yii\web\View $this
  * @var string $alias
  * @var int $cityId
+ * @var string $cityAlias
  * @var Group $group
  */
 
@@ -28,7 +29,7 @@ $keywords = [
     'Все объявления',
 ];
 
-$cities = City::getCities();
+$cities = City::getCities(false);
 if ($cityId == 0) {
     $url = Url::to(['/bboards']) . "/0" . (empty($alias) ? "" : "/" . $alias);
     $this->params['breadcrumbs'][] = ['label' => "Все города", 'url' => $url];
@@ -81,7 +82,7 @@ $this->registerMetaTag([
                     ]) ?>
                 </div>
                 <label>Город: </label>
-                <?= Html::dropDownList('city', $cityId, $cities, [
+                <?= Html::dropDownList('city', $cityAlias, City::getCities(), [
                     'prompt'          => 'Все',
                     'class'           => 'form-control select-all-city',
                     'data-url'        => Url::to(['site/index']),

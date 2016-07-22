@@ -32,6 +32,11 @@ $city = $ads->citym;
     }
     ?>
     <b>Телефон</b>: <?= strip_tags($ads->phone) ?><br/>
+    <?php
+    if (!empty($ads->price)) {
+        echo "<b>Цена</b>: " . $ads->price . "<br/>";
+    }
+    ?>
     <p>
         <?= nl2br(strip_tags($ads->description)) ?>
     </p>

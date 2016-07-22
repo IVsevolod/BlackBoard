@@ -4,13 +4,17 @@
 
 use yii\helpers\Html;
 
-$this->title = 'About';
+$this->registerJsFile(Yii::$app->request->baseUrl . '/js/about.js', ['depends' => [\yii\web\JqueryAsset::className()]]);
+
+$this->title = 'О сайте';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-about">
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <p>This is the About page. You may modify the following file to customize its content:</p>
+    <p>Доска бесплатных объявлений - сайт для бесплатного размещения своих объявлений!</p>
 
-    <code><?= __FILE__ ?></code>
+    <p>Объявление можете разместить <?= Html::a('по адресу', ['advert/create']) ?></p>
+
+    <p>Чтобы просмотреть все объявления перейдите <?= Html::a('по ссылке', ['/']) ?></p>
 </div>

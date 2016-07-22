@@ -24,6 +24,7 @@ use yii\web\IdentityInterface;
  * @property integer     $group
  * @property int         $deleted
  * @property int         $city
+ * @property int         $price
  * @property integer     $date_update
  * @property integer     $date_create
  *
@@ -68,7 +69,7 @@ class Ads extends ActiveRecord
     {
         return [
             [['description'], 'default', 'value' => ''],
-            [['date_update', 'date_create', 'city'], 'integer'],
+            [['date_update', 'date_create', 'city', 'price'], 'integer'],
             [['title', 'alias'], 'string', 'max' => 255],
             [['description'], 'string', 'max' => 10000],
             [['phone'], 'string', 'max' => 30],
