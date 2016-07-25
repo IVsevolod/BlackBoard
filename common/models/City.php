@@ -2,9 +2,7 @@
 namespace common\models;
 
 use Yii;
-use yii\behaviors\SluggableBehavior;
 use yii\db\ActiveRecord;
-use yii\helpers\Url;
 
 /**
  * city model
