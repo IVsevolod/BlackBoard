@@ -5,6 +5,7 @@ namespace common\components;
 
 
 use BW\Vkontakte;
+use common\models\Vkpost;
 use yii\base\Component;
 
 require_once __DIR__ . '\vkontakte\Vkontakte.php';
@@ -58,10 +59,10 @@ class VkontakteComponent extends Vkontakte
     public function vkGet($groupId, $groupName, $offset, $limit)
     {
         $params = [
-            'offset' => $offset,
-            'count'  => $limit,
+            'offset'   => $offset,
+            'count'    => $limit,
             'owner_id' => '',
-            'domain' => '',
+            'domain'   => '',
         ];
         if (empty($groupId)) {
             $params['owner_id'] = -$groupId;
@@ -70,6 +71,46 @@ class VkontakteComponent extends Vkontakte
         }
 
         return $this->api('wall.get', $params);
+    }
+
+    /**
+     * @param int $groupId
+     * @param int $publishDate
+     * @param Vkpost $vkpost
+     *
+     * @return \stdClass
+     */
+    public function vkPostFromModel($groupId, $publishDate, $vkpost)
+    {
+
+        $text = $vkpost->text;
+        $breaks = array("<br />","<br>","<br/>");
+        $text = str_ireplace($breaks, "\r\n", $text);
+
+        $attachments = $vkpost->attachments;
+        if (empty($attachments)) {
+            $attachments = "";
+        } else {
+            $attachmentsObj = json_decode($attachments, true);
+            $attachments = [];
+            foreach ($attachmentsObj as $value) {
+                $valueData = $value[$value['type']];
+                if (isset($value['type']) && isset($valueData['owner_id']) && isset($valueData['pid'])) {
+                    $attachments[] = $value['type'] . $valueData['owner_id'] . '_' . $valueData['pid'];
+                }
+            }
+            $attachments = join(',', $attachments);
+        }
+        $params = [
+            'owner_id'     => -$groupId,
+            'message'      => "$text",
+            'from_group'   => 1,
+            'publish_date' => $publishDate,
+            'guid'         => date('Ym') . $vkpost->post_id,
+            'attachments'  => $attachments,
+        ];
+
+        return $this->apiPost('wall.post', $params);
     }
 
 }

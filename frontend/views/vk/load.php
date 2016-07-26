@@ -1,15 +1,15 @@
 <?php
 /**
- * @var $access_token
- * @var $group_id
- * @var $group_name
- * @var $offset
- * @var $limit
- * @var $category
- * @var $vkpostsSave
+ * @var string $access_token
+ * @var int $group_id
+ * @var string $group_name
+ * @var int $offset
+ * @var int $limit
+ * @var string $category
+ * @var Vkpost[] $vkpostsSave
  */
 
-
+use common\models\Vkpost;
 use yii\helpers\Html;
 
 

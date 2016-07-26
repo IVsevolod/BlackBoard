@@ -306,6 +306,55 @@ class Vkontakte extends Component
         return $result;
     }
 
+    public function apiPost($method, array $query = array())
+    {
+        $ch = curl_init();
+
+        $parameters = array();
+        foreach ($query as $param => $value) {
+            $q = $param . '=';
+            if (is_array($value)) {
+                $q .= urlencode(implode(',', $value));
+            } else {
+                $q .= urlencode($value);
+            }
+
+            $parameters[] = $q;
+        }
+
+        $q = join('&', $parameters);
+
+        $url = 'https://api.vk.com/method/' . $method . '?access_token=' . $this->accessToken->access_token;
+
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $q);
+
+        $result = curl_exec($ch);
+
+        if (!$result) {
+            $errno = curl_errno($ch);
+            $error = curl_error($ch);
+        }
+
+        curl_close($ch);
+
+        if (isset($errno) && isset($error)) {
+//            throw new \Exception($error, $errno);
+        }
+
+        $result = json_decode($result);
+
+        if (isset($result->response)) {
+
+            return $result->response;
+        }
+
+        return $result;
+    }
+
     /**
      * Make the curl request to specified url
      * @param string $url The url for curl() function

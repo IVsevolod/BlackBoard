@@ -4,6 +4,7 @@ namespace frontend\controllers;
 use common\components\VkontakteComponent;
 use common\models\Vkpost;
 use Yii;
+use yii\db\Expression;
 use yii\web\Controller;
 
 /**
@@ -67,6 +68,63 @@ class VkController extends Controller
                 'limit'        => $limit,
                 'category'     => $category,
                 'vkpostsSave'  => $vkpostsSave,
+            ]
+        );
+    }
+
+    public function actionPost()
+    {
+        $request = Yii::$app->getRequest();
+        $access_token = empty($request->post('access_token')) ? '' : $request->post('access_token');
+        $group_id = empty($request->post('group_id')) ? '' : $request->post('group_id');
+        $category = empty($request->post('category')) ? '' : $request->post('category');
+        $date = empty($request->post('date')) ? '' : $request->post('date');
+        $count = empty($request->post('count')) ? '' : $request->post('count');
+        $interval = empty($request->post('interval')) ? '' : $request->post('interval');
+
+
+        if ($request->isPost) {
+            $datestart = strtotime($date);
+
+            if ($count > 25) {
+                $count = 25;
+            }
+
+            /** @var VkontakteComponent $vkapi */
+            $vkapi = Yii::$app->vkapi;
+            $vkapi->initAccessToken($access_token);
+
+            /** @var Vkpost[] $vkposts */
+            $vkposts = Vkpost::find()
+                ->where(['category' => $category])
+                ->orderBy(new Expression('rand()'))
+                ->limit($count)
+                ->all();
+            while ($count > 0) {
+                /** @var Vkpost $vkpost */
+                $vkpost = array_shift($vkposts);
+
+                $response = $vkapi->vkPostFromModel($group_id, $datestart, $vkpost);
+
+                echo date('Y.m.d H:i:s', $datestart) . '<br/>';
+                echo $vkpost->text . '<br/>';
+
+                $count--;
+                $datestart = strtotime(' + ' . $interval . ' min', $datestart);
+            }
+
+            exit;
+        }
+
+        return $this->render(
+            'post',
+            [
+                'access_token' => $access_token,
+                'group_id'     => $group_id,
+                'category'     => $category,
+                'date'         => $date,
+                'count'        => $count,
+                'interval'     => $interval,
             ]
         );
     }
