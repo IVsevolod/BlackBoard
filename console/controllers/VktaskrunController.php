@@ -33,7 +33,7 @@ class VktaskrunController extends Controller
             }
             foreach ($vkposts as $vkpost) {
                 if ($datestart < time()) {
-                    $datestart = strtotime(' + 7 min', $datestart);
+                    $datestart = strtotime('+7 min', time());
                 }
 
                 $response = $vkapi->vkPostFromModel($group_id, $datestart, $vkpost);
