@@ -32,6 +32,10 @@ class VktaskrunController extends Controller
                 $datestart = strtotime(' + ' . $interval . ' min', $vkTaskRun->time);
             }
             foreach ($vkposts as $vkpost) {
+                if ($datestart < time()) {
+                    $datestart = strtotime(' + 7 min', $datestart);
+                }
+
                 $response = $vkapi->vkPostFromModel($group_id, $datestart, $vkpost);
 
                 $interval = rand(25, 45);
