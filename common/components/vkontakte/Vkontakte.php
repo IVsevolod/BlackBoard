@@ -343,6 +343,7 @@ class Vkontakte extends Component
 
         if (isset($errno) && isset($error)) {
 //            throw new \Exception($error, $errno);
+            return false;
         }
 
         $result = json_decode($result);
