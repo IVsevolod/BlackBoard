@@ -14,7 +14,7 @@ class VktaskrunController extends Controller
     public function actionInit()
     {
         $vkTaskRun = VkTaskRun::find()->orderBy('time')->one();
-        if (empty($vkTaskRun) || $vkTaskRun->time < time()) {
+        if (empty($vkTaskRun) || ($vkTaskRun->time < strtotime('- 120 min', time()) )) {
             $access_token = '395e815c1b25c9ab7d1b99195bf754364a96a025437cd8c4379faf8d977088779ae98e2c569f5197e711b';
             $vkapi = \Yii::$app->vkapi;
             $vkapi->initAccessToken($access_token);
