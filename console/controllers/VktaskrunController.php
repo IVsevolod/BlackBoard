@@ -36,6 +36,10 @@ class VktaskrunController extends Controller
 
                 $interval = rand(25, 45);
                 if ($response) {
+                    $vknewtaskrun = new VkTaskRun();
+                    $vknewtaskrun->time = $datestart;
+                    $vknewtaskrun->group_id = $group_id;
+                    $vknewtaskrun->save();
                     $datestart = strtotime(' + ' . $interval . ' min', $datestart);
                 }
 
