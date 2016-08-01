@@ -4,11 +4,8 @@
 namespace common\components;
 
 
-use BW\Vkontakte;
 use common\models\Vkpost;
 use yii\base\Component;
-
-require_once __DIR__ . '\vkontakte\Vkontakte.php';
 
 class VkontakteComponent extends Vkontakte
 {

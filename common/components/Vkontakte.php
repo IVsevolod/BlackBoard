@@ -1,6 +1,6 @@
 <?php
 
-namespace BW;
+namespace common\components;
 use CURLFile;
 
 use yii\base\Component;
