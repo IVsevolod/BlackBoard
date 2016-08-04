@@ -56,8 +56,8 @@ class VktaskrunController extends Controller
     public function actionInit()
     {
         $access_token = '395e815c1b25c9ab7d1b99195bf754364a96a025437cd8c4379faf8d977088779ae98e2c569f5197e711b';
-        $this->runTask($access_token, '40768668', ['happy'], ['happy', 'my_home_happy', 'для_души']);
-        $this->runTask($access_token, '124470635', ['happy'], ['humor','анекдоты', 'приколы', 'юмор']);
+        $this->runTask($access_token, '40768668', ['happy', 'video'], ['happy', 'my_home_happy', 'для_души']);
+        $this->runTask($access_token, '124470635', ['humor', 'gif', 'video'], ['humor','анекдоты', 'приколы', 'юмор']);
 
     }
 }
