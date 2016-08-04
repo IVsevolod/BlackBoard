@@ -14,7 +14,7 @@ use yii\helpers\Html;
 
 
 echo Html::beginForm('', 'post');
-echo Html::label('access_token. (' . Html::a('получить токен', 'https://oauth.vk.com/authorize?client_id=5553652&scope=groups,wall,offline,photos&redirect_uri=https://oauth.vk.com/blank.html&display=page&v=5.21&response_type=token', ['target' => '_blank']) . ')' );
+echo Html::label('access_token. (' . Html::a('получить токен', 'https://oauth.vk.com/authorize?client_id=5553652&scope=groups,wall,offline,photos,docs&redirect_uri=https://oauth.vk.com/blank.html&display=page&v=5.21&response_type=token', ['target' => '_blank']) . ')' );
 echo Html::textInput('access_token', $access_token, ['class' => 'form form-control']);
 
 echo Html::label('ID группы');

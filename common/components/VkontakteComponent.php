@@ -5,6 +5,7 @@ namespace common\components;
 
 
 use common\models\Vkpost;
+use CURLFile;
 use yii\base\Component;
 
 class VkontakteComponent extends Vkontakte
@@ -42,9 +43,8 @@ class VkontakteComponent extends Vkontakte
 
     public function vkPost($publickId)
     {
-        $vkAPI = new \BW\Vkontakte(['access_token' => $this->accessToken]);
         $urlImg = $this->saveImg('http://brazilianzouk.ru/img/logo.png');
-        if ($vkAPI->postToPublic($publickId, "Привет Хабр!", $urlImg, [])) {
+        if ($this->postToPublic($publickId, "Привет Хабр!", $urlImg, [])) {
             unlink($urlImg);
             return true;
         } else {
@@ -80,7 +80,6 @@ class VkontakteComponent extends Vkontakte
      */
     public function vkPostFromModel($groupId, $publishDate, $vkpost, $tags)
     {
-
         $text = $vkpost->text;
         $breaks = array("<br />","<br>","<br/>");
         $text = str_ireplace($breaks, "\r\n", $text);
@@ -93,7 +92,81 @@ class VkontakteComponent extends Vkontakte
             $attachments = [];
             foreach ($attachmentsObj as $value) {
                 $valueData = $value[$value['type']];
-                if (isset($value['type']) && isset($valueData['owner_id']) && isset($valueData['pid'])) {
+                if (isset($value['type']) && $value['type'] == 'doc') {
+                    $response = $this->api('docs.getUploadServer', [
+                        'group_id' => $groupId,
+                    ]);
+                    $uploadURL = $response->upload_url;
+
+                    $tmpfname = tempnam("/tmp", "doc");
+                    $handle = fopen($tmpfname, "w");
+                    fwrite($handle, file_get_contents($value['doc']['url'], FILE_USE_INCLUDE_PATH));
+                    fclose($handle);
+
+                    $newFileName = "all_humors_" . substr(md5(basename($tmpfname)), 0, 8) . '.gif';
+                    $finfo = finfo_open(FILEINFO_MIME);
+                    $mime = finfo_file($finfo, $tmpfname);
+                    $parts = explode(";", $mime);
+                    $file = new CurlFile($tmpfname, array_shift($parts), $newFileName);
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $uploadURL);
+                    curl_setopt($ch, CURLOPT_HEADER, false);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: multipart/form-data"));
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS,  ['file' => $file]);
+
+                    $response = json_decode(curl_exec($ch));
+                    curl_close($ch);
+
+                    unlink($tmpfname);
+
+                    $response = $this->api('docs.save', [
+                        'file' => $response->file,
+                    ]);
+                    $attachments[] = $value['type'] . $response[0]->owner_id . '_' . $response[0]->did;
+                } else if (isset($value['type']) && $value['type'] == 'photo') {
+                    $response = $this->api('photos.getWallUploadServer', [
+                        'group_id' => $groupId,
+                    ]);
+                    $uploadURL = $response->upload_url;
+
+                    $tmpfname = tempnam("/tmp", "photo");
+                    $handle = fopen($tmpfname, "w");
+                    fwrite($handle, file_get_contents($value['photo']['src_big'], FILE_USE_INCLUDE_PATH));
+                    fclose($handle);
+
+                    $finfo = finfo_open(FILEINFO_MIME);
+                    $mime = finfo_file($finfo, $tmpfname);
+                    $parts = explode(";", $mime);
+                    $file = new CurlFile($tmpfname, array_shift($parts), 'image.jpg');
+
+                    $ch = curl_init();
+                    curl_setopt($ch, CURLOPT_URL, $uploadURL);
+                    curl_setopt($ch, CURLOPT_HEADER, false);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: multipart/form-data"));
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                    curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
+                    curl_setopt($ch, CURLOPT_POST, true);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS,  ['file1' => $file]);
+
+                    $response = json_decode(curl_exec($ch));
+                    curl_close($ch);
+
+                    unlink($tmpfname);
+
+                    $response = $this->api('photos.saveWallPhoto', [
+                        'group_id' => $groupId,
+                        'photo' => $response->photo,
+                        'server' => $response->server,
+                        'hash' => $response->hash,
+                    ]);
+                    $attachments[] = $response[0]->id;
+                } else if (isset($value['type']) && isset($valueData['owner_id']) && isset($valueData['pid'])) {
                     $attachments[] = $value['type'] . $valueData['owner_id'] . '_' . $valueData['pid'];
                 }
             }
