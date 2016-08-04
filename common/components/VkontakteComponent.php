@@ -74,10 +74,11 @@ class VkontakteComponent extends Vkontakte
      * @param int $groupId
      * @param int $publishDate
      * @param Vkpost $vkpost
+     * @param string[] $tags
      *
      * @return \stdClass
      */
-    public function vkPostFromModel($groupId, $publishDate, $vkpost)
+    public function vkPostFromModel($groupId, $publishDate, $vkpost, $tags)
     {
 
         $text = $vkpost->text;
@@ -98,9 +99,16 @@ class VkontakteComponent extends Vkontakte
             }
             $attachments = join(',', $attachments);
         }
+        if (!empty($tags)) {
+            $text .= "\n\n";
+
+            foreach ($tags as $tag) {
+                $text .= ' #' . str_replace(' ', '_', $tag);
+            }
+        }
         $params = [
             'owner_id'     => -$groupId,
-            'message'      => "$text",
+            'message'      => $text,
             'from_group'   => 1,
             'publish_date' => $publishDate,
             'guid'         => date('Ym') . $vkpost->post_id,

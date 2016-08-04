@@ -104,7 +104,7 @@ class VkController extends Controller
                 /** @var Vkpost $vkpost */
                 $vkpost = array_shift($vkposts);
 
-                $response = $vkapi->vkPostFromModel($group_id, $datestart, $vkpost);
+                $response = $vkapi->vkPostFromModel($group_id, $datestart, $vkpost, []);
 
                 echo date('Y.m.d H:i:s', $datestart) . '<br/>';
                 echo $vkpost->text . '<br/>';
