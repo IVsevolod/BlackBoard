@@ -2,24 +2,26 @@
 namespace common\models;
 
 use Yii;
+use yii\data\ActiveDataProvider;
 use yii\db\ActiveRecord;
 use yii\helpers\Url;
 
 /**
  * ads model
  *
- * @property integer     $id
- * @property string      $title
- * @property string      $description
- * @property string      $phone
- * @property int         $show_count
- * @property string      $alias
- * @property integer     $group
- * @property int         $deleted
- * @property int         $city
- * @property int         $price
- * @property integer     $date_update
- * @property integer     $date_create
+ * @property integer $id
+ * @property string $title
+ * @property string $description
+ * @property string $phone
+ * @property int $show_count
+ * @property string $alias
+ * @property integer $group
+ * @property int $deleted
+ * @property int $city
+ * @property int $price
+ * @property string $type
+ * @property integer $date_update
+ * @property integer $date_create
  *
  * @property City $citym
  */
@@ -66,7 +68,37 @@ class Ads extends ActiveRecord
             [['title', 'alias'], 'string', 'max' => 255],
             [['description'], 'string', 'max' => 10000],
             [['phone'], 'string', 'max' => 30],
+            [['type'], 'string'],
         ];
+    }
+
+    public static function getAllTypes()
+    {
+        return [
+            'sell'    => 'Покупка',
+            'buy'     => 'Продажа',
+            'service' => 'Услуга',
+        ];
+    }
+
+
+    public function getShortDescription($length = 200, $end = '...')
+    {
+        $charset = 'UTF-8';
+        $token = '~';
+        $description = $this->description;
+        $str = $description;
+        $str = strip_tags($str);
+        $str = nl2br($str);
+        $str = preg_replace('/\s+/', ' ', $str);
+        if (mb_strlen($str, $charset) >= $length) {
+            $wrap = wordwrap($str, $length, $token);
+            $str_cut = mb_substr($wrap, 0, mb_strpos($wrap, $token, 0, $charset), $charset);
+            $str_cut .= $end;
+            return $str_cut;
+        } else {
+            return $str;
+        }
     }
 
     /**
@@ -90,21 +122,21 @@ class Ads extends ActiveRecord
         $str = trim(preg_replace('/\s+/u', ' ', $str));
 
         $words = explode(' ', $str);
-        $keywords = array();
-        while(($c_word = array_shift($words)) !== null) {
-            if(strlen($c_word) < $minWordLen) continue;
+        $keywords = [];
+        while (($c_word = array_shift($words)) !== null) {
+            if (strlen($c_word) < $minWordLen) continue;
 
             $c_word = strtolower($c_word);
-            if(array_key_exists($c_word, $keywords)) $keywords[$c_word][1]++;
-            else $keywords[$c_word] = array($c_word, 1);
+            if (array_key_exists($c_word, $keywords)) $keywords[$c_word][1]++;
+            else $keywords[$c_word] = [$c_word, 1];
         }
         usort($keywords, function ($first, $sec) {
             return $sec[1] - $first[1];
         });
 
-        $final_keywords = array();
-        foreach($keywords as $keyword_det) {
-            if($keyword_det[1] < $minWordOccurrences) break;
+        $final_keywords = [];
+        foreach ($keywords as $keyword_det) {
+            if ($keyword_det[1] < $minWordOccurrences) break;
             array_push($final_keywords, $keyword_det[0]);
         }
         return $asArray ? $final_keywords : implode(', ', $final_keywords);
@@ -113,12 +145,12 @@ class Ads extends ActiveRecord
     // функция превода текста с кириллицы в траскрипт
     function encodestring($str)
     {
-        $rus = array('А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я');
-        $lat = array('A', 'B', 'V', 'G', 'D', 'E', 'E', 'Gh', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', 'H', 'C', 'Ch', 'Sh', 'Sch', 'Y', 'Y', 'Y', 'E', 'Yu', 'Ya', 'a', 'b', 'v', 'g', 'd', 'e', 'e', 'gh', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'h', 'c', 'ch', 'sh', 'sch', 'y', 'y', 'y', 'e', 'yu', 'ya');
+        $rus = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', 'ъ', 'ы', 'ь', 'э', 'ю', 'я'];
+        $lat = ['A', 'B', 'V', 'G', 'D', 'E', 'E', 'Gh', 'Z', 'I', 'Y', 'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F', 'H', 'C', 'Ch', 'Sh', 'Sch', 'Y', 'Y', 'Y', 'E', 'Yu', 'Ya', 'a', 'b', 'v', 'g', 'd', 'e', 'e', 'gh', 'z', 'i', 'y', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't', 'u', 'f', 'h', 'c', 'ch', 'sh', 'sch', 'y', 'y', 'y', 'e', 'yu', 'ya'];
         return str_replace($rus, $lat, $str);
     }
 
-    function toAscii($str, $replace = array(), $delimiter = '-')
+    function toAscii($str, $replace = [], $delimiter = '-')
     {
         $str = trim($str);
         if (!empty($replace)) {
@@ -176,5 +208,33 @@ class Ads extends ActiveRecord
     public function getCitym()
     {
         return $this->hasOne(City::className(), ['id' => 'city']);
+    }
+
+    public static function getDataProvider($alias, $city, $type)
+    {
+        $find = Ads::find()->andWhere(['deleted' => 0])->orderBy('date_create');
+        if (!empty($alias)) {
+            $group = Group::findOne(['alias' => $alias]);
+            if (!empty($group)) {
+                $find = $find->andWhere('`group` = :group', [':group' => $group->id]);
+            }
+        }
+
+        if (!empty($city)) {
+            $mcity = City::find()->andWhere('`alias` = :cityAlias OR `id` = :cityId', [':cityAlias' => $city, ':cityId' => (int)$city])->one();
+            $find = $find->andWhere('`city` = :cityId', [':cityId' => $mcity->id]);
+        }
+
+        if (!empty($type)) {
+            $find = $find->andWhere('`type` = :type', [':type' => $type]);
+        }
+
+        $dataProvider = new ActiveDataProvider([
+            'query'      => $find,
+            'pagination' => [
+                'pageSize' => 10,
+            ],
+        ]);
+        return $dataProvider;
     }
 }

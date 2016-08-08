@@ -20,7 +20,7 @@ class VktaskrunController extends Controller
             $vkposts = Vkpost::find()
                 ->where(['category' => $category])
                 ->orderBy(new Expression('rand()'))
-                ->limit(5)
+                ->limit(3)
                 ->all();
 
             $interval = rand(25, 45);
@@ -55,8 +55,8 @@ class VktaskrunController extends Controller
     public function actionInit()
     {
         $access_token = '7e8c6a1d84ad87b030212e02811ec1ab276c19a74831fd350d9fda18751edb87c46aa177b5096b7dc1fd7';
-        $this->runTask($access_token, '40768668', ['happy', 'video'], ['happy', 'my_home_happy', 'для_души']);
-        $this->runTask($access_token, '124470635', ['humor', 'gif'], ['humor','анекдоты', 'приколы', 'юмор']);
+        $this->runTask($access_token, '40768668', ['happy', 'video', 'story'], ['happy', 'my_home_happy', 'для_души']);
+        $this->runTask($access_token, '124470635', ['humor', 'gif', 'story'], ['humor','анекдоты', 'приколы', 'юмор']);
 
     }
 }

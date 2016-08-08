@@ -39,6 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($ads, 'title')->label('Заголовок') ?>
             <?= $form->field($ads, 'price')->label('Цена') ?>
             <?= $form->field($ads, 'phone')->label('Телефон') ?>
+            <?= $form->field($ads, 'type')->dropDownList(Ads::getAllTypes())->label('Тип') ?>
             <?= $form->field($ads, 'description')->textarea()->label('Описание') ?>
 
             <div class="form-group">

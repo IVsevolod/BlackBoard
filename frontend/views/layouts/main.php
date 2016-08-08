@@ -42,7 +42,6 @@ AppAsset::register($this);
     ];
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => '<b class="success">mail@sdrd.ru</b>'];
-        $menuItems[] = ['label' => '<b class="success">76-60-03</b>'];
     } else {
         $menuItems[] = '<li>'
             . Html::beginForm(['/site/logout'], 'post')

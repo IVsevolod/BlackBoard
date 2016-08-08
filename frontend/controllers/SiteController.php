@@ -6,6 +6,7 @@ use common\models\City;
 use common\models\Group;
 use Yii;
 use yii\base\InvalidParamException;
+use yii\data\ActiveDataProvider;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -76,7 +77,17 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
-        return $this->render('index', ['alias' => "", 'cityId' => "0", 'cityAlias' => '', 'group' => null]);
+        return $this->render(
+            'index',
+            [
+                'alias'        => "",
+                'cityId'       => "0",
+                'cityAlias'    => '',
+                'group'        => null,
+                'type'         => null,
+                'dataProvider' => Ads::getDataProvider(null, null, null),
+            ]
+        );
     }
 
     public function actionBboardcity($city)
@@ -89,33 +100,39 @@ class SiteController extends Controller
         return $this->render(
             'index',
             [
-                'alias' => "",
-                'cityId' => !empty($mcity) ? $mcity->id : 0,
-                'cityAlias' => !empty($mcity) ? $mcity->alias : 0,
-                'group' => null
+                'alias'        => "",
+                'cityId'       => !empty($mcity) ? $mcity->id : 0,
+                'cityAlias'    => !empty($mcity) ? $mcity->alias : 0,
+                'group'        => null,
+                'type'         => null,
+                'dataProvider' => Ads::getDataProvider(null, $city, null),
             ]
         );
     }
 
-    public function actionBboard($alias, $city)
+    public function actionBboard($alias, $city, $type = "")
     {
         $group = Group::findOne(['alias' => $alias]);
         if (!empty($group)) {
             $group->addShowCount();
             $group->save();
         }
+
         if (!empty($city)) {
             $mcity = City::find()->andWhere('`alias` = :cityAlias OR `id` = :cityId', [':cityAlias' => $city, ':cityId' => (int)$city])->one();
         } else {
             $mcity = null;
         }
+
         return $this->render(
             'index',
             [
-                'alias' => $alias,
-                'cityId' => !empty($mcity) ? $mcity->id : 0,
-                'cityAlias' => !empty($mcity) ? $mcity->alias : 0,
-                'group' => $group,
+                'alias'        => $alias,
+                'cityId'       => !empty($mcity) ? $mcity->id : 0,
+                'cityAlias'    => !empty($mcity) ? $mcity->alias : 0,
+                'group'        => $group,
+                'type'         => $type,
+                'dataProvider' => Ads::getDataProvider($alias, $city, $type),
             ]
         );
     }
@@ -172,7 +189,7 @@ class SiteController extends Controller
 
     public function actionSitemap()
     {
-        $urls = array();
+        $urls = [];
 
         $items = Ads::find()->where(['deleted' => 0])->orderBy('id DESC')->limit(5000)->all();
 
