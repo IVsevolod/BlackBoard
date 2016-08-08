@@ -49,7 +49,10 @@ if ($cityId == 0) {
     $keywords[] = 'Объявления ' . $cities[$cityId];
     $keywords[] = 'Бесплатные объявления ' . $cities[$cityId];
 }
-$description .= ".";
+$description .= ". ";
+if (!empty($group)) {
+    $description .= $group->description;
+}
 
 if (empty($group)) {
     $url = Url::to(['/bboards']) . (empty($cityId) ? "/0" : "/" . $cityId);
@@ -83,7 +86,7 @@ $this->registerMetaTag([
 <div class="site-index">
     <div class="body-content">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <form class="form-inline margin-bottom">
                     <div class="form-group">
                         <label>Город: </label>
@@ -116,7 +119,11 @@ $this->registerMetaTag([
                         ]) ?>
                     </div>
                 </form>
-
+                <?= !empty($group) ? $group->description : '' ?>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
                 <?php
                 Pjax::begin([
                     'enablePushState'    => false, // to disable push state
