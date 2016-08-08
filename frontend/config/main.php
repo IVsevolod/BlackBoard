@@ -50,5 +50,6 @@ return [
             'class' => 'common\components\VkontakteComponent',
         ],
     ],
+    'language'  =>'ru_RU',
     'params'              => $params,
 ];
