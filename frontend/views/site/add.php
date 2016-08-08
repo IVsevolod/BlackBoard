@@ -21,7 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-lg-9">
             <?php $form = ActiveForm::begin(); ?>
-            <?= $form->field($ads, 'group')->dropDownList(Group::getAllCategories(false), [
+            <?= $form->field($ads, 'group')->dropDownList(Group::getHierarchy(false), [
                 'prompt'   => 'Все',
                 'class'    => 'form-control select-all-group',
                 'data-url' => \yii\helpers\Url::to(['site/index']),
@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <?= $form->field($ads, 'title')->label('Заголовок') ?>
             <?= $form->field($ads, 'price')->label('Цена') ?>
             <?= $form->field($ads, 'phone')->label('Телефон') ?>
-            <?= $form->field($ads, 'type')->dropDownList(Ads::getAllTypes())->label('Тип') ?>
+            <?= $form->field($ads, 'type')->dropDownList(Ads::getAllTypes(), ['prompt' => 'Все'])->label('Тип') ?>
             <?= $form->field($ads, 'description')->textarea()->label('Описание') ?>
 
             <div class="form-group">
