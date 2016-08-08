@@ -212,7 +212,7 @@ class Ads extends ActiveRecord
 
     public static function getDataProvider($alias, $city, $type)
     {
-        $find = Ads::find()->andWhere(['deleted' => 0])->orderBy('date_create');
+        $find = Ads::find()->andWhere(['deleted' => 0])->orderBy('date_create desc');
         if (!empty($alias)) {
             $group = Group::findOne(['alias' => $alias]);
             if (!empty($group)) {
