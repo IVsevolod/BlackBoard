@@ -97,10 +97,10 @@ $this->registerMetaTag([
                     </div>
                     <div class="form-group">
                         <label class="">Категория: </label>
-                        <?= Html::dropDownList('group', $alias, Group::getAllCategories(), [
+                        <?= Html::dropDownList('group', $alias, Group::getHierarchy(), [
                             'prompt'          => 'Все',
                             'class'           => 'form-control select-all-group',
-                            'data-url'        => Url::to(['site/index']),
+                            'data-url'        => \yii\helpers\Url::to(['site/index']),
                             'data-bboard-url' => Url::to(['/bboards']),
                             'data-main-url'   => Url::to(['/']),
                         ]) ?>
