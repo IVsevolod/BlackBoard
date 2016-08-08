@@ -119,7 +119,7 @@ $this->registerMetaTag([
                         ]) ?>
                     </div>
                 </form>
-                <?= !empty($group) ? $group->description : '' ?>
+                <?= !empty($group) ? "<div class='alert alert-info'>{$group->description}</div>" : '' ?>
             </div>
         </div>
         <div class="row">
