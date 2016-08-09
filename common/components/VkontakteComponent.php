@@ -96,6 +96,9 @@ class VkontakteComponent extends Vkontakte
                     $response = $this->api('docs.getUploadServer', [
                         'group_id' => $groupId,
                     ]);
+                    if (empty($response->upload_url)) {
+                        continue;
+                    }
                     $uploadURL = $response->upload_url;
 
                     $tmpfname = tempnam("/tmp", "doc");
